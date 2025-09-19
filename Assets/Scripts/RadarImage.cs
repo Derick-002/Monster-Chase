@@ -12,9 +12,6 @@ public class RadarImage : MonoBehaviour
     private Dictionary<Transform, Image> radarMap = new Dictionary<Transform, Image>();
     private Dictionary<Transform, (Transform left, Transform right)> monsterBounds = new Dictionary<Transform, (Transform, Transform)>();
 
-    private Transform player;          // player reference
-    private Image playerRadarIcon;     // player icon
-
     // Define radar world bounds
     public float radarWorldMinX = 0f;
     public float radarWorldMaxX = 21800f;
@@ -28,38 +25,6 @@ public class RadarImage : MonoBehaviour
             // This is a scene instance; hide it
             radarImagePrefab.gameObject.SetActive(false);
         }
-    }
-
-
-    /// <summary>
-    /// Set the player for the radar
-    /// </summary>
-    public void SetPlayer(Transform playerTransform, Sprite playerSprite)
-    {
-        player = playerTransform;
-
-        Debug.Log("The radar width: " + radarBar.rect);
-
-        // Create a new GameObject for the player icon (avoid prefab issues)
-        GameObject playerGO = new GameObject("PlayerRadarIcon", typeof(RectTransform), typeof(Image));
-        playerGO.transform.SetParent(radarBar, false);
-
-        // Configure RectTransform
-        RectTransform rt = playerGO.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(20, 20); // adjust size if needed
-        rt.localScale = Vector3.one;
-        rt.pivot = new Vector2(0.5f, 0.5f);
-
-        // Configure Image component
-        Image img = playerGO.GetComponent<Image>();
-        img.sprite = playerSprite;
-        img.preserveAspect = true;
-
-        // Assign to field
-        playerRadarIcon = img;
-
-        // Immediately map player's world position to radar
-        MapPlayerPositionToRadar();
     }
 
     /// <summary>
@@ -109,9 +74,6 @@ public class RadarImage : MonoBehaviour
             radarMap.Remove(d);
             monsterBounds.Remove(d);
         }
-
-        // Update player icon
-        MapPlayerPositionToRadar();
     }
 
     private void UpdateSingleMonsterIcon(Transform monster, Image radarIcon)
@@ -133,23 +95,4 @@ public class RadarImage : MonoBehaviour
         radarIcon.rectTransform.anchoredPosition = new Vector2(anchoredX, anchoredY);
     }
 
-    private void MapPlayerPositionToRadar()
-    {
-        if (player == null || playerRadarIcon == null)
-            return;
-
-        // Clamp world position
-        float clampedX = Mathf.Clamp(player.position.x, radarWorldMinX, radarWorldMaxX);
-        float clampedY = Mathf.Clamp(player.position.y, radarWorldMinY, radarWorldMaxY);
-
-        // Normalize
-        float normalizedX = (clampedX - radarWorldMinX) / (radarWorldMaxX - radarWorldMinX);
-        float normalizedY = (clampedY - radarWorldMinY) / (radarWorldMaxY - radarWorldMinY);
-
-        // Map normalized to radar bar coordinates based on pivot
-        float anchoredX = normalizedX * radarBar.rect.width - radarBar.rect.width * radarBar.pivot.x;
-        float anchoredY = normalizedY * radarBar.rect.height - radarBar.rect.height * radarBar.pivot.y;
-
-        playerRadarIcon.rectTransform.anchoredPosition = new Vector2(anchoredX, anchoredY);
-    }
 } // class

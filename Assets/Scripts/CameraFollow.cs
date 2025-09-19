@@ -17,15 +17,6 @@ public class CameraFollow : MonoBehaviour
         if (playerObj != null)
         {
             player = playerObj.transform;
-            RadarImage radar = Object.FindFirstObjectByType<RadarImage>();
-            if (radar != null)
-            {
-                radar.SetPlayer(player, playerRadarSprite);
-            }
-            else
-            {
-                Debug.LogError("RadarImage reference not set in inspector!");
-            }
         }
         else
         {
