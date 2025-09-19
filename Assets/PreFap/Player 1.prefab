@@ -194,3 +194,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   moveForce: 10
   jumpForce: 11
+  scoreScript: {fileID: 0}

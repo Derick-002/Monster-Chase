@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
     public float jumpForce = 11F;
     private float movementX;
 
+    public Score scoreScript;
+
     private Rigidbody2D myRigidbody2D;
     private Animator animator;
     private SpriteRenderer sr;
@@ -24,6 +26,10 @@ public class Player : MonoBehaviour
 
         //settings
         myRigidbody2D.gravityScale = 2F;
+        if (scoreScript == null)
+        {
+            scoreScript = FindFirstObjectByType<Score>();
+        }
     }
 
     public void Update()
@@ -97,6 +103,11 @@ public class Player : MonoBehaviour
         if (collision.gameObject.CompareTag(ENEMY_TAG))
         {
             Destroy(gameObject);
+            scoreScript.isGameOver = true;
+            if (scoreScript.GameOverText != null)
+                scoreScript.GameOverText.gameObject.SetActive(true);
+            else
+                Debug.LogWarning("GameOverText not assigned in Score!");
         }
     }
 
